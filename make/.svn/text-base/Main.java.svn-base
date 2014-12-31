@@ -1,0 +1,136 @@
+package make;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
+/** Initial class for the 'make' program.
+ *  @author Jason Qiu
+ */
+public final class Main {
+
+    /** Entry point for the CS61B make program.  ARGS may contain options
+     *  and targets:
+     *      [ -f MAKEFILE ] [ -D FILEINFO ] TARGET1 TARGET2 ...
+     */
+    public static void main(String... args) {
+        String makefileName;
+        String fileInfoName;
+
+        if (args.length == 0) {
+            usage();
+        }
+
+        makefileName = "Makefile";
+        fileInfoName = "fileinfo";
+
+        int a;
+        for (a = 0; a < args.length; a += 1) {
+            if (args[a].equals("-f")) {
+                a += 1;
+                if (a == args.length) {
+                    usage();
+                } else {
+                    makefileName = args[a];
+                }
+            } else if (args[a].equals("-D")) {
+                a += 1;
+                if (a == args.length) {
+                    usage();
+                } else {
+                    fileInfoName = args[a];
+                }
+            } else if (args[a].startsWith("-")) {
+                usage();
+            } else {
+                break;
+            }
+        }
+        
+        InputStream fileinfo =
+                Main.class.getClassLoader().getResourceAsStream(fileInfoName);
+        BufferedReader reader =
+                new BufferedReader(new InputStreamReader(fileinfo));
+        try {
+            String s = reader.readLine();
+            currentTime = Integer.parseInt(s.trim());
+            s = reader.readLine();
+            while (s != null)  {
+                String[] tokens = s.split("\\s+");
+                nameDates.put(tokens[0], Integer.parseInt(tokens[1]));
+                s = reader.readLine();
+            }
+        } catch (IOException e) {
+            System.out.println("IO error");
+            System.exit(1);
+        }
+        
+        InputStream makefile =
+                Main.class.getClassLoader().getResourceAsStream(makefileName);
+        BufferedReader reader2 =
+                new BufferedReader(new InputStreamReader(makefile));
+        try {
+            String s = reader2.readLine();
+            String[] tokens = s.split("\\s+");
+            String target = tokens[0].substring(
+                    0, tokens[0].length() - 1);
+            Rule rule = new Rule(target, new HashSet<String>(),
+                    new HashSet<String>());
+            rules.add(rule);
+            while (s != null)  {
+                tokens = s.split("\\s+");
+                if (tokens.length > 0 && !tokens[0].startsWith("#")) {
+                    if (tokens[0].endsWith(":")) {
+                        target = tokens[0].substring(
+                                0, tokens[0].length() - 1);
+                        rule = new Rule(target, new HashSet<String>(),
+                                new HashSet<String>());
+                        for (int i = 1; i < tokens.length; i += 1) {
+                            rule.addPrereq(tokens[i]);
+                        }
+                        rules.add(rule);
+                    } else {
+                        rule.addCommand(s.trim());
+                    }
+                }
+                s = reader2.readLine();
+            }
+        } catch (IOException e) {
+            System.out.println("IO error");
+            System.exit(1);
+        }
+
+        ArrayList<String> targets = new ArrayList<String>();
+
+        for (; a < args.length; a += 1) {
+            targets.add(args[a]);
+        }
+
+        make(makefileName, fileInfoName, targets);
+    }
+
+    /** Carry out the make procedure using MAKEFILENAME as the makefile,
+     *  taking information on the current file-system state from FILEINFONAME,
+     *  and building TARGETS, or the first target in the makefile if TARGETS
+     *  is empty.
+     */
+    private static void make(String makefileName, String fileInfoName,
+                             List<String> targets) {
+        // FILL IN
+    }
+
+    /** Print a brief usage message and exit program abnormally. */
+    private static void usage() {
+        // FILL THIS IN
+        System.exit(1);
+    }
+    
+    static int currentTime;
+    static HashMap<String, Integer> nameDates = new HashMap<String, Integer>();
+    static ArrayList<Rule> rules = new ArrayList<Rule>();
+}

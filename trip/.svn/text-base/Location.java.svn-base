@@ -1,0 +1,25 @@
+package trip;
+
+public class Location {
+    String place;
+    double _x;
+    double _y;
+    
+    public Location(String p, double x, double y) {
+        place = p;
+        _x = x;
+        _y = y;
+    }
+    
+    public String getPlace() {
+        return place;
+    }
+    
+    public double getX() {
+        return _x;
+    }
+    
+    public double getY() {
+        return _y;
+    }
+}

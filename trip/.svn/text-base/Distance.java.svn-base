@@ -1,0 +1,37 @@
+package trip;
+
+public class Distance {
+    String place;
+    String road;
+    double dist;
+    String direction;
+    String otherPlace;
+    
+    public Distance(String p, String r, double d, String dir, String p2) {
+        place = p;
+        road = r;
+        dist = d;
+        direction = dir;
+        otherPlace = p2;
+    }
+    
+    public String getPlace() {
+        return place;
+    }
+    
+    public String getOtherPlace() {
+        return otherPlace;
+    }
+    
+    public String getRoad() {
+        return road;
+    }
+    
+    public double getDist() {
+        return dist;
+    }
+    
+    public String getDirection() {
+        return direction;
+    }
+}
